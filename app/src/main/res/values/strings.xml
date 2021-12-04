@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">jmart-android</string>
+    <string name="login_button">Login</string>
+    <string name="register_text_button">Don\'t have an account yet? \n Register now!</string>
+    <string name="register_button">Register</string>
+    <string-array name="shipmentPlans">
+        <item>INSTANT</item>
+        <item>SAME DAY</item>
+        <item>NEXT DAY</item>
+        <item>REGULER</item>
+        <item>KARGO</item>
+    </string-array>
+    <string-array name="productCategory">
+        <item>BOOK</item>
+        <item>KITCHEN</item>
+        <item>ELECTRONIC</item>
+        <item>FASHION</item>
+        <item>GAMING</item>
+        <item>GADGET</item>
+        <item>MOTHERCARE</item>
+        <item>COSMETICS</item>
+        <item>HEALTHCARE</item>
+        <item>FURNITURE</item>
+        <item>JEWELRY</item>
+        <item>TOYS</item>
+        <item>FNB</item>
+        <item>STATIONERY</item>
+        <item>SPORTS</item>
+        <item>AUTOMOTIVE</item>
+        <item>PETCARE</item>
+        <item>ART_CRAFT</item>
+        <item>CARPENTRY</item>
+        <item>MISCELLANEOUS</item>
+        <item>PROPERTY</item>
+        <item>TRAVEL</item>
+        <item>WEDDING</item>
+    </string-array>
+    <string name="name_label">Name</string>
+    <string name="email_label">Email</string>
+    <string name="balance_label">Balance</string>
+    <string name="cancel_label">Cancel</string>
+    <string name="register_label">Register</string>
+    <string name="phone_number_label">Phone Number</string>
+    <string name="address_label">Address</string>
+    <string name="register_store_label">Register Store</string>
+    <string name="weight_label">Weight</string>
+    <string name="price_label">Price</string>
+    <string name="discount_label">Discount</string>
+    <string name="new_label">New</string>
+    <string name="used_label">Used</string>
+    <string name="category_label">Category</string>
+    <string name="password_label">Password</string>
+    <string name="store_label">Store</string>
+</resources>

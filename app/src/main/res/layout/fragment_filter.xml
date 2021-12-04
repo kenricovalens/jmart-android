@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.FilterFragment">
+
+
+    <Button
+        android:id="@+id/filterClearButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="468dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:text="Clear"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.965"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/filterProductNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/name_label"
+        app:layout_constraintBottom_toTopOf="@+id/filterProductName"
+        app:layout_constraintEnd_toEndOf="@+id/filterProductName"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/filterProductName" />
+
+    <TextView
+        android:id="@+id/filterLowestPriceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lowest price"
+        app:layout_constraintBottom_toTopOf="@+id/filterLowestPrice"
+        app:layout_constraintEnd_toEndOf="@+id/filterLowestPrice"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/filterLowestPrice" />
+
+    <TextView
+        android:id="@+id/filterPriceToLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="to"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/filterHighestPrice"
+        app:layout_constraintHorizontal_bias="0.464"
+        app:layout_constraintStart_toEndOf="@+id/filterLowestPrice"
+        app:layout_constraintTop_toBottomOf="@+id/filterProductName"
+        app:layout_constraintVertical_bias="0.102" />
+
+    <TextView
+        android:id="@+id/filterHighestPriceLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Highest price"
+        app:layout_constraintBottom_toTopOf="@+id/filterHighestPrice"
+        app:layout_constraintEnd_toEndOf="@+id/filterHighestPrice"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/filterHighestPrice" />
+
+    <TextView
+        android:id="@+id/filterProductConditionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="72dp"
+        android:text="Product Condition"
+        app:layout_constraintEnd_toStartOf="@+id/filterProductIsUsed"
+        app:layout_constraintHorizontal_bias="0.346"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filterLowestPrice" />
+
+    <TextView
+        android:id="@+id/filterProductCategoryLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:text="Product Category"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.049"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filterProductConditionLabel"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/filterProductName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:ems="18"
+        android:hint="Product name"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.416"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/filterLowestPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="36dp"
+        android:ems="8"
+        android:hint="ex. 0"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filterProductName" />
+
+    <EditText
+        android:id="@+id/filterHighestPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="4dp"
+        android:ems="8"
+        android:hint="ex. 80000"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.773"
+        app:layout_constraintStart_toEndOf="@+id/filterLowestPrice"
+        app:layout_constraintTop_toBottomOf="@+id/filterProductName"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <CheckBox
+        android:id="@+id/filterProductIsNew"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="28dp"
+        android:text="@string/new_label"
+        app:layout_constraintBottom_toBottomOf="@+id/filterProductIsUsed"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/filterProductIsUsed"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <CheckBox
+        android:id="@+id/filterProductIsUsed"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="228dp"
+        android:layout_marginTop="44dp"
+        android:text="@string/used_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filterHighestPrice" />
+
+    <Spinner
+        android:id="@+id/filterProductCategory"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="216dp"
+        android:entries="@array/productCategory"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.811"
+        app:layout_constraintStart_toEndOf="@+id/filterProductCategoryLabel"
+        app:layout_constraintTop_toBottomOf="@+id/filterProductName" />
+
+    <Button
+        android:id="@+id/filterApplyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="468dp"
+        android:ems="10"
+        android:text="Apply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.025"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
