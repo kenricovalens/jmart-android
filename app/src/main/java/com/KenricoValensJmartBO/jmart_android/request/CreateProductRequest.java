@@ -10,6 +10,10 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * CreateProductRequest digunakan untuk untuk membuat produk. Request ini hanya bisa dilakukan
+ * user memiliki Store.
+ */
 public class CreateProductRequest extends StringRequest {
     public static final String URL = "http://10.0.2.2:8080/product/create";
     private final Map<String, String> params;

@@ -44,13 +44,12 @@
         android:id="@+id/filterPriceToLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
         android:text="to"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/filterHighestPrice"
-        app:layout_constraintHorizontal_bias="0.464"
+        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toEndOf="@+id/filterLowestPrice"
-        app:layout_constraintTop_toBottomOf="@+id/filterProductName"
-        app:layout_constraintVertical_bias="0.102" />
+        app:layout_constraintTop_toBottomOf="@+id/filterProductName" />
 
     <TextView
         android:id="@+id/filterHighestPriceLabel"
@@ -80,12 +79,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
         android:text="Product Category"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.049"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filterProductConditionLabel"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/filterProductConditionLabel" />
 
     <EditText
         android:id="@+id/filterProductName"
@@ -121,12 +118,10 @@
         android:ems="8"
         android:hint="ex. 80000"
         android:inputType="number"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.773"
         app:layout_constraintStart_toEndOf="@+id/filterLowestPrice"
-        app:layout_constraintTop_toBottomOf="@+id/filterProductName"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/filterProductName" />
 
     <CheckBox
         android:id="@+id/filterProductIsNew"

@@ -26,7 +26,10 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Jumlah page fragment untuk menggunakan TabLayout dengan ViewPager2
     private static final int NUM_PAGES = 2;
+
+    // Inisiasikan ViewPager2
     public static ViewPager2 viewPager;
     private FragmentStateAdapter pagerAdapter;
 
@@ -39,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_bar, menu);
 
         // Jika tidak memiliki store, menu Add Product tidak kelihatan
-        // Comment kode ini jika ingin melakukan testing terhadap penambahan product.
         invalidateOptionsMenu();
         addProduct = menu.findItem(R.id.addProduct);
         if (getLoggedAccount().store != null) {
@@ -52,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Method onCreate adalah method yang akan dijalankan saat MainActivity dijalankan. Terdapat beberapa
+     * fungsi method ini, yaitu inisiasi ViewPager2 dan attach fragment menggunakan TabLayoutMediator.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,12 +72,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Class MyPagerAdapter dibuat untuk menghandle pergantian fragment TabLayout pada
+     * MainActivity.
+     */
     private class MyPagerAdapter extends FragmentStateAdapter {
 
         public MyPagerAdapter(FragmentActivity fa) {
             super(fa);
         }
 
+        /**
+         * Method createFragment berfungsi untuk memindahkan fragment (seperti intent activity)
+         * @param pos - Posisi fragment.
+         * @return - Intent untuk ke fragment yang dituju.
+         */
         @Override
         public Fragment createFragment(int pos) {
             switch (pos) {
@@ -95,12 +111,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (viewPager.getCurrentItem() == 0) {
-            super.onBackPressed();
+            moveTaskToBack(true);
         } else {
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         }
     }
 
+    /**
+     * Method onOptionsItemSelected digunakan untuk menangani menu bar yang diklik.
+     * Terdapat dua jenis menu bar, yaitu ke activity AddProduct dan activity AboutMe.
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {

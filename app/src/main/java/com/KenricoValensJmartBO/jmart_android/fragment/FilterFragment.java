@@ -20,9 +20,9 @@ import com.KenricoValensJmartBO.jmart_android.model.ProductCategory;
 import java.util.Objects;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link FilterFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * FilterFragment adalah fragment yang bertugas untuk melakukan pencarian produk menggunakan filter
+ * menurut field yang ada. Penggunaan fragment dikarenakan ingin membentuk dua buah halaman pada satu
+ * activity sehingga menggunakan fragment.
  */
 public class FilterFragment extends Fragment {
 
@@ -32,11 +32,14 @@ public class FilterFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    // Inisiasikan semua field pada .xml
     private Button clearButton, applyButton;
     private EditText filterProductLowestPrice, filterProductHighestPrice, filterProductName;
     private CheckBox isUsed, isNew;
     private Spinner productCategorySpinner;
 
+    // Semua fields ini digunakan sebagai isi dari filternya untuk melakukan request.
+    // Fields ini akan diakses oleh ProductFragment untuk request.
     public static boolean isFiltered = false;
     public static String filterName;
     public static int filterLowestPrice, filterHighestPrice;
@@ -64,11 +67,24 @@ public class FilterFragment extends Fragment {
         }
     }
 
+    /**
+     * Method onCreateView pada FilterFragment berfungsi sebagai awalan saat fragment ini dibuat.
+     * View dan semua fields lainnya dicari menurut layout .xml.
+     * @param inflater Untuk menampilkan layout fragment pada MainActivity
+     * @param container Activity container (MainActivity)
+     * @param savedInstanceState
+     * @return View
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        /**
+         * Melakukan findViewById pada Fragment berbeda dari Activity. Kita harus mendapatkan View
+         * pada method onCreateView. View ini nantinya digunakan sebagai getApplicationContext().
+         */
         View v = inflater.inflate(R.layout.fragment_filter, container, false);
 
+        // Cari ID masing-masing dari layout .xml
         filterProductName = v.findViewById(R.id.filterProductName);
         filterProductLowestPrice = v.findViewById(R.id.filterLowestPrice);
         filterProductHighestPrice = v.findViewById(R.id.filterHighestPrice);
@@ -79,11 +95,16 @@ public class FilterFragment extends Fragment {
         clearButton = v.findViewById(R.id.filterClearButton);
         applyButton = v.findViewById(R.id.filterApplyButton);
 
+        /**
+         * setOnClickListener untuk button Apply Filter.
+         */
         applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Jika button ini di-click, maka boolean isFiltered menjadi true.
                 isFiltered = true;
 
+                // Error Catching untuk null fields
                 if(filterProductName.getText().toString().isEmpty()
                         || filterProductLowestPrice.getText().toString().isEmpty()
                         || filterProductHighestPrice.getText().toString().isEmpty()) {
@@ -114,6 +135,11 @@ public class FilterFragment extends Fragment {
             }
         });
 
+        /**
+         * Button Clear ini akan mengosongkan semua fields pada FilterFragment dan juga mengubah
+         * value dari isFiltered menjadi false. Ini menjadi informasi bagi ProductFragment untuk
+         * melakukan pencarian terhadap product tanpa filter.
+         */
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

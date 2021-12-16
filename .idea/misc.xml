@@ -5,15 +5,22 @@
       <map>
         <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/drawable/ic_baseline_search_24.xml" value="0.10555555555555556" />
         <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/activity_about_me.xml" value="0.264" />
+        <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/activity_account_order.xml" value="0.2" />
+        <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/activity_account_payment_details.xml" value="0.264" />
         <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/activity_create_product.xml" value="0.264" />
+        <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/activity_item_details.xml" value="0.2" />
         <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/activity_login.xml" value="0.152" />
         <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/activity_payment.xml" value="0.2" />
         <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/activity_register.xml" value="0.264" />
+        <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/activity_store_order.xml" value="0.2" />
+        <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/activity_store_payment_details.xml" value="0.264" />
         <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/fragment_filter.xml" value="0.2" />
         <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/fragment_product.xml" value="0.264" />
         <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/fragment_products.xml" value="0.264" />
         <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/layout/product_list_view.xml" value="0.18795289855072464" />
         <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/menu/about_me.xml" value="0.1" />
+        <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/menu/about_me_menu.xml" value="0.264" />
         <entry key="..\:/Users/ken/AndroidStudioProjects/jmart-android/app/src/main/res/menu/search_bar.xml" value="0.4" />
       </map>
     </option>

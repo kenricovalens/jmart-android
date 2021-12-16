@@ -11,6 +11,11 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class GetProductRequest digunakan untuk melakukan pengambilan produk dari product.json.
+ * Terdapat perbedaan, yaitu saat menggunakan Volley dengan method GET, Volley tidak bisa
+ * memasukkan parameter langsung ke dalam URL. Maka dari itu, URL harus diformat secara manual.
+ */
 public class GetProductRequest extends StringRequest {
     private static final String URL = "http://10.0.2.2:8080/product/" + getLoggedAccount().id + "/store?page=%d&pageSize=%d";
     private final Map<String, String> params;

@@ -51,4 +51,9 @@
     <string name="category_label">Category</string>
     <string name="password_label">Password</string>
     <string name="store_label">Store</string>
+    <string name="condition_label">Condition</string>
+    <string name="shipment_plans_label">Shipment Plans</string>
+    <string name="total_price_label">Your total price is </string>
+    <string name="buy_label">Buy</string>
+    <string name="date_label">Date</string>
 </resources>

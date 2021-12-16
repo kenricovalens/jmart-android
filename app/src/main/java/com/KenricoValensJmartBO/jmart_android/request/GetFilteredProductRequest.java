@@ -12,6 +12,9 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * GetFilteredProductRequest adalah request untuk mendapatkan produk dengan filter.
+ */
 public class GetFilteredProductRequest extends StringRequest {
 
     private static final String URL = "http://10.0.2.2:8080/product/getFiltered?page=%d&pageSize=%d&accountId=%d&search=%s&minPrice=%d&maxPrice=%d&category=%s";

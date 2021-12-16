@@ -16,6 +16,9 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * TopUpRequest digunakan untuk melakukan TopUp balance pada akun yang sedang log in
+ */
 public class TopUpRequest extends StringRequest {
     private final static String URL = "http://10.0.2.2:8080/account/" + getLoggedAccount().id + "/topUp";
     private final Map<String, String> params;

@@ -1,13 +1,19 @@
 package com.KenricoValensJmartBO.jmart_android;
 
 import static com.KenricoValensJmartBO.jmart_android.LoginActivity.getLoggedAccount;
+import static com.KenricoValensJmartBO.jmart_android.LoginActivity.session;
 
 import static java.lang.Double.valueOf;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +22,7 @@ import android.widget.Toast;
 
 import com.KenricoValensJmartBO.jmart_android.model.Account;
 import com.KenricoValensJmartBO.jmart_android.model.Store;
+import com.KenricoValensJmartBO.jmart_android.request.BuyProductRequest;
 import com.KenricoValensJmartBO.jmart_android.request.RegisterStoreRequest;
 import com.KenricoValensJmartBO.jmart_android.request.RequestFactory;
 import com.KenricoValensJmartBO.jmart_android.request.TopUpRequest;
@@ -32,13 +39,39 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
+
+/**
+ * AboutMeActivity berfungsi untuk melihat informasi akun yang sedang login (nama, balance, dll.) dan
+ * aktivitas untuk melakukan Top Up, daftar store dan informasi store, history pembelian account dan
+ * history store yang produknya dibeli oleh akun lain, dan pilihan untuk log out.
+ */
 public class AboutMeActivity extends AppCompatActivity {
 
+    // Inisiasikan setiap komponen layout yang ingin digunakan
     private static final Gson gson = new Gson();
     private TextView showAccountName, showAccountEmail, showAccountBalance, storeName, storeAddress, storePhoneNumber;
     private EditText topUp, registerStoreName, registerStoreAddress, registerStorePhoneNumber;
     private Button topUpBtn, registerStoreBtn, doRegisterBtn, cancelRegisterBtn;
     private CardView registerStoreForm, storeInformation;
+    private MenuItem storeOrder, accountHistory;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.about_me_menu, menu);
+
+        // Jika tidak memiliki store, menu Add Product tidak kelihatan
+        invalidateOptionsMenu();
+        storeOrder = menu.findItem(R.id.storeOrderRequest);
+        if (getLoggedAccount().store != null) {
+            storeOrder.setVisible(true);
+        }
+        else {
+            storeOrder.setVisible(false);
+        }
+
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +108,7 @@ public class AboutMeActivity extends AppCompatActivity {
         // Set field Account ke TextView
         showAccountName.setText(getLoggedAccount().name);
         showAccountEmail.setText(getLoggedAccount().email);
+
         showAccountBalance.setText(String.valueOf(getLoggedAccount().balance));
 
         if(getLoggedAccount().store != null) {
@@ -94,18 +128,22 @@ public class AboutMeActivity extends AppCompatActivity {
             storeInformation.setVisibility(View.GONE);
         }
 
+        /**
+         * setOnClickListener untuk button melakukan top up.
+         */
         topUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Response.Listener<String> listener = new Response.Listener<String>() {
                     @Override
-                    public void onResponse(String response) {
-                        if(response.equals("true")) {
+                    public void onResponse(String response) { // Jika request berhasil, response akan ada disini
+                        if(response.equals("true")) { // Jika backend mengembalikan true, tambahkan balance ke getLoggedAccount().balance
                             Double totalBalance = Double.parseDouble(showAccountBalance.getText().toString())
                                     + Double.parseDouble(topUp.getText().toString());
                             showAccountBalance.setText(String.valueOf(totalBalance));
                             getLoggedAccount().balance = totalBalance;
 
+                            // Clear field amount top up
                             topUp.setText("");
 
                             Toast.makeText(getApplicationContext(),
@@ -125,17 +163,18 @@ public class AboutMeActivity extends AppCompatActivity {
                     }
                 };
 
+                // Error handling saat mencegah field null
                 if(topUp.getText().toString().isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Silahkan masukkan jumlah uang yang ingin top up.",
                             Toast.LENGTH_SHORT).show();
                 } else {
                     Double amount = Double.valueOf(topUp.getText().toString());
 
-                    if(amount < 20000) {
+                    if(amount < 20000) { // Jika semua terisi, lakukan besarnya. (minimal 20000)
                         Toast.makeText(getApplicationContext(), "Minimal top up senilai 20000",
                                 Toast.LENGTH_SHORT).show();
                     }
-                    else {
+                    else { // Jika banyaknya top-up lebih dari 20000, jalankan request
                         TopUpRequest newTopUp = new TopUpRequest(amount, listener, errorListener);
 
                         RequestQueue queue = Volley.newRequestQueue(AboutMeActivity.this);
@@ -145,6 +184,10 @@ public class AboutMeActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * Untuk register, pengguna bisa klik button ini dan akan menghide button ini dan show
+         * CardView berisi form daftar store.
+         */
         registerStoreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,15 +196,19 @@ public class AboutMeActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * Untuk melakukan pendaftaran, user mengklik button ini.
+         */
         doRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Response.Listener<String> listener = new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        try {
+                        try { // Jika response berhasil, ubah response ke JSONObject.
                             JSONObject object = new JSONObject(response);
                             if(object != null) {
+                                // Ubah JSONObject ke bentuk Store.class, lalu masukkan ke getLoggedAccount().store.
                                 getLoggedAccount().store = gson.fromJson(object.toString(), Store.class);
 
                                 storeName.setText(getLoggedAccount().store.name);
@@ -186,14 +233,16 @@ public class AboutMeActivity extends AppCompatActivity {
                     }
                 };
 
+                // Dapatkan String yang dibutuhkan untuk pendaftaran Store
                 String newStoreName = registerStoreName.getText().toString();
                 String newStoreAddress = registerStoreAddress.getText().toString();
                 String newStorePhoneNumber = registerStorePhoneNumber.getText().toString();
 
+                // Error handling jika null
                 if(newStoreName.isEmpty() || newStoreAddress.isEmpty() || newStorePhoneNumber.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Tidak boleh ada field yang kosong!", Toast.LENGTH_SHORT).show();
                 }
-                else {
+                else { // Jika tidak null, maka lanjutkan untuk melakukan request.
                     RegisterStoreRequest newRegisterStore = new RegisterStoreRequest(newStoreName, newStoreAddress, newStorePhoneNumber,
                             listener, errorListener);
 
@@ -202,6 +251,10 @@ public class AboutMeActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * Cancel register button untuk menutup form CardView pendaftaran store. Button RegisterStore
+         * akan dimunculkan.
+         */
         cancelRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -209,5 +262,49 @@ public class AboutMeActivity extends AppCompatActivity {
                 registerStoreForm.setVisibility(View.GONE);
             }
         });
+    }
+
+    /**
+     * method onOptionsItemSelected digunakan untuk set onMenuItemClickListener. Terdapat tiga buah
+     * menu, yaitu Store History, Account history, dan Account logout.
+     * @param item Item yang ter-click
+     * @return true
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.storeOrderRequest:
+                Intent toStoreOrderRequest = new Intent(AboutMeActivity.this, StoreOrderActivity.class);
+                startActivity(toStoreOrderRequest);
+                return true;
+            case R.id.accountBuyHistory:
+                Intent toAccountBuyHistory = new Intent(AboutMeActivity.this, AccountOrderActivity.class);
+                startActivity(toAccountBuyHistory);
+                return true;
+            case R.id.accountLogOut:
+                AlertDialog.Builder builder = new AlertDialog.Builder(AboutMeActivity.this);
+
+                builder.setTitle("Konfirmasi Log Out");
+                builder.setMessage("Apakah Anda ingin Log Out?");
+                builder.setPositiveButton("Log Out", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        session.logoutUser();
+                        Toast.makeText(getApplicationContext(), "Berhasil log out", Toast.LENGTH_SHORT).show();
+                        Intent toLoginPage = new Intent(AboutMeActivity.this, LoginActivity.class);
+                        startActivity(toLoginPage);
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                builder.show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

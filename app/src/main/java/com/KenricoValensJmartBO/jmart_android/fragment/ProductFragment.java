@@ -8,6 +8,7 @@ import static com.KenricoValensJmartBO.jmart_android.fragment.FilterFragment.fil
 import static com.KenricoValensJmartBO.jmart_android.fragment.FilterFragment.isFiltered;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,12 +16,14 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.KenricoValensJmartBO.jmart_android.ItemDetailsActivity;
 import com.KenricoValensJmartBO.jmart_android.MainActivity;
 import com.KenricoValensJmartBO.jmart_android.R;
 import com.KenricoValensJmartBO.jmart_android.model.Account;
@@ -48,9 +51,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProductFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * ProductFragment adalah fragment untuk menampilkan list untuk product yang diambil dari backend.
  */
 public class ProductFragment extends Fragment {
 
@@ -60,6 +61,7 @@ public class ProductFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    // Inisiasi widget sesuai dengan layout .xml
     private Button prevPageBtn, nextPageBtn, goFindProductBtn;
     private EditText pageNum;
 
@@ -84,13 +86,22 @@ public class ProductFragment extends Fragment {
         }
     }
 
+    /**
+     * Method onCreateView() ini digunakan untuk menampilkan ProductFragment pada MainActivity.
+     * @param inflater Inflate layout
+     * @param container Container fragment
+     * @param savedInstanceState
+     * @return View
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_product, container, false);
+        // Cari ListView pada layout.
         ListView lstItems = v.findViewById(R.id.listView);
         Gson gson = new Gson();
 
+        // Inisiasi semua komponen pada layout
         prevPageBtn = v.findViewById(R.id.productPrevPage);
         nextPageBtn = v.findViewById(R.id.productNextPage);
         goFindProductBtn = v.findViewById(R.id.productGoPage);
@@ -102,19 +113,68 @@ public class ProductFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 try {
+                    // Karena mendapatkan beberapa produk, maka konversi menjadi JSONArray.
                     JSONArray jsonArray = new JSONArray(response);
                     List<Product> productReturned = new ArrayList<>();
 
+                    /* Setiap elemen pada JSONArray akan diubah ke JSONObject, lalu menggunakan gson
+                       untuk mengkonversi JSONObject menjadi string, lalu masukkan ke class Product.
+                       Tambahkan produk ke List.
+                     */
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject newObj = jsonArray.getJSONObject(i);
                         Product product = gson.fromJson(newObj.toString(), Product.class);
                         productReturned.add(product);
                     }
 
+                    // Buat ArrayAdapter untuk mempopulasikan ListView.
                     ArrayAdapter<Product> allItemsAdapter = new ArrayAdapter<Product>(getActivity().getBaseContext(),
                             android.R.layout.simple_list_item_1,
                             productReturned);
+                    // setAdapter pada ListView untuk menampilkannya.
                     lstItems.setAdapter(allItemsAdapter);
+
+                    /**
+                     * Setiap produk bisa diklik, maka dari itu harus membuat onItemClickListener.
+                     * Button akan mendapatkan posisi dan digunakan untuk mendapatkan produk pada
+                     * List product yang sekarang berisi produk.
+                     */
+                    lstItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                            Product productClicked = productReturned.get(position);
+
+                            int accountId = productClicked.accountId;
+                            String productName = productClicked.name;
+                            int productId = productClicked.id;
+                            int productWeight = productClicked.weight;
+                            boolean productConditionUsed = productClicked.conditionUsed;
+                            double productDiscount = productClicked.discount;
+                            double productPrice = productClicked.price;
+                            byte productShipmentPlans = productClicked.shipmentPlans;
+                            ProductCategory productCategory = productClicked.category;
+
+                            /* Bundle digunakan sebagai object penyimpan pair key dengan value.
+                               Bundle akan dikirim bersamaan dengan Intent sebagai nilai yang
+                               dipassing ke Activity selanjutnya.
+                             */
+                            Bundle bundle = new Bundle();
+                            bundle.putInt("accountId", accountId);
+                            bundle.putInt("productId", productId);
+                            bundle.putString("name", productName);
+                            bundle.putInt("weight", productWeight);
+                            bundle.putBoolean("conditionUsed", productConditionUsed);
+                            bundle.putDouble("discount", productDiscount);
+                            bundle.putDouble("price", productPrice);
+                            bundle.putByte("shipmentPlans", productShipmentPlans);
+                            bundle.putString("category", String.valueOf(productCategory));
+
+                            Intent itemDetails = new Intent(getContext(), ItemDetailsActivity.class);
+                            // tambahkah Bundle ke Intent.
+                            itemDetails.putExtras(bundle);
+                            startActivity(itemDetails);
+                        }
+                    });
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -130,11 +190,14 @@ public class ProductFragment extends Fragment {
         };
         int pages = Integer.parseInt(pageNum.getText().toString()) - 1;
 
+        // Buat requestnya dan masukkan ke queue.
         GetProductRequest newGetProduct = new GetProductRequest(pages, listener, errorListener);
         RequestQueue queue = Volley.newRequestQueue(getActivity().getBaseContext());
         queue.add(newGetProduct);
 
-        // Buttons
+        /**
+         * prevButton digunakan untuk mengurangi nomor halaman. Jika halaman sudah 1, tidak bisa mundur lagi.
+         */
         prevPageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -148,6 +211,9 @@ public class ProductFragment extends Fragment {
             }
         });
 
+        /**
+         * nextButton digunakan untuk menambah nomor halaman.
+         */
         nextPageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -157,6 +223,9 @@ public class ProductFragment extends Fragment {
             }
         });
 
+        /**
+         * Button Go ini digunakan untuk melakukan pencarian terhadap halaman lainnya.
+         */
         goFindProductBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -187,6 +256,37 @@ public class ProductFragment extends Fragment {
                                         android.R.layout.simple_list_item_1,
                                         productReturned);
                                 lstItems.setAdapter(allItemsAdapter);
+                                lstItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                                        Product productClicked = productReturned.get(position);
+
+                                        int accountId = productClicked.accountId;
+                                        String productName = productClicked.name;
+                                        int productId = productClicked.id;
+                                        int productWeight = productClicked.weight;
+                                        boolean productConditionUsed = productClicked.conditionUsed;
+                                        double productDiscount = productClicked.discount;
+                                        double productPrice = productClicked.price;
+                                        byte productShipmentPlans = productClicked.shipmentPlans;
+                                        ProductCategory productCategory = productClicked.category;
+
+                                        Bundle bundle = new Bundle();
+                                        bundle.putInt("accountId", accountId);
+                                        bundle.putInt("productId", productId);
+                                        bundle.putString("name", productName);
+                                        bundle.putInt("weight", productWeight);
+                                        bundle.putBoolean("conditionUsed", productConditionUsed);
+                                        bundle.putDouble("discount", productDiscount);
+                                        bundle.putDouble("price", productPrice);
+                                        bundle.putByte("shipmentPlans", productShipmentPlans);
+                                        bundle.putString("category", String.valueOf(productCategory));
+
+                                        Intent itemDetails = new Intent(getContext(), ItemDetailsActivity.class);
+                                        itemDetails.putExtras(bundle);
+                                        startActivity(itemDetails);
+                                    }
+                                });
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -205,7 +305,7 @@ public class ProductFragment extends Fragment {
                     GetProductRequest newGetProduct = new GetProductRequest(pages, listener, errorListener);
                     RequestQueue queue = Volley.newRequestQueue(getActivity().getBaseContext());
                     queue.add(newGetProduct);
-                } else {
+                } else { // Jika tidak ada filter yang diapply
                     Response.Listener<String> listener = new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -223,6 +323,37 @@ public class ProductFragment extends Fragment {
                                         android.R.layout.simple_list_item_1,
                                         productReturned);
                                 lstItems.setAdapter(allItemsAdapter);
+                                lstItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                                        Product productClicked = productReturned.get(position);
+
+                                        int accountId = productClicked.accountId;
+                                        String productName = productClicked.name;
+                                        int productId = productClicked.id;
+                                        int productWeight = productClicked.weight;
+                                        boolean productConditionUsed = productClicked.conditionUsed;
+                                        double productDiscount = productClicked.discount;
+                                        double productPrice = productClicked.price;
+                                        byte productShipmentPlans = productClicked.shipmentPlans;
+                                        ProductCategory productCategory = productClicked.category;
+
+                                        Bundle bundle = new Bundle();
+                                        bundle.putInt("accountId", accountId);
+                                        bundle.putInt("productId", productId);
+                                        bundle.putString("name", productName);
+                                        bundle.putInt("weight", productWeight);
+                                        bundle.putBoolean("conditionUsed", productConditionUsed);
+                                        bundle.putDouble("discount", productDiscount);
+                                        bundle.putDouble("price", productPrice);
+                                        bundle.putByte("shipmentPlans", productShipmentPlans);
+                                        bundle.putString("category", String.valueOf(productCategory));
+
+                                        Intent itemDetails = new Intent(getContext(), ItemDetailsActivity.class);
+                                        itemDetails.putExtras(bundle);
+                                        startActivity(itemDetails);
+                                    }
+                                });
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -253,6 +384,12 @@ public class ProductFragment extends Fragment {
         return v;
     }
 
+    /**
+     * Method onResume ini akan dijalankan setelah user kembali ke MainActivity lagi sehingga fragment
+     * akan melakukan request produk lagi. Pada method ini juga akan menggunakan dua buah tipe request,
+     * yaitu yang terfilter dan tidak terfilter. Caranya sama seperti sebelumnya, yaitu menggunakan toggle
+     * ifFiltered.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -278,6 +415,37 @@ public class ProductFragment extends Fragment {
                                 android.R.layout.simple_list_item_1,
                                 productReturned);
                         lstItems.setAdapter(allItemsAdapter);
+                        lstItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                                Product productClicked = productReturned.get(position);
+
+                                int accountId = productClicked.accountId;
+                                String productName = productClicked.name;
+                                int productId = productClicked.id;
+                                int productWeight = productClicked.weight;
+                                boolean productConditionUsed = productClicked.conditionUsed;
+                                double productDiscount = productClicked.discount;
+                                double productPrice = productClicked.price;
+                                byte productShipmentPlans = productClicked.shipmentPlans;
+                                ProductCategory productCategory = productClicked.category;
+
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("accountId", accountId);
+                                bundle.putInt("productId", productId);
+                                bundle.putString("name", productName);
+                                bundle.putInt("weight", productWeight);
+                                bundle.putBoolean("conditionUsed", productConditionUsed);
+                                bundle.putDouble("discount", productDiscount);
+                                bundle.putDouble("price", productPrice);
+                                bundle.putByte("shipmentPlans", productShipmentPlans);
+                                bundle.putString("category", String.valueOf(productCategory));
+
+                                Intent itemDetails = new Intent(getContext(), ItemDetailsActivity.class);
+                                itemDetails.putExtras(bundle);
+                                startActivity(itemDetails);
+                            }
+                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -314,6 +482,37 @@ public class ProductFragment extends Fragment {
                                 android.R.layout.simple_list_item_1,
                                 productReturned);
                         lstItems.setAdapter(allItemsAdapter);
+                        lstItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                                Product productClicked = productReturned.get(position);
+
+                                int accountId = productClicked.accountId;
+                                String productName = productClicked.name;
+                                int productId = productClicked.id;
+                                int productWeight = productClicked.weight;
+                                boolean productConditionUsed = productClicked.conditionUsed;
+                                double productDiscount = productClicked.discount;
+                                double productPrice = productClicked.price;
+                                byte productShipmentPlans = productClicked.shipmentPlans;
+                                ProductCategory productCategory = productClicked.category;
+
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("accountId", accountId);
+                                bundle.putInt("productId", productId);
+                                bundle.putString("name", productName);
+                                bundle.putInt("weight", productWeight);
+                                bundle.putBoolean("conditionUsed", productConditionUsed);
+                                bundle.putDouble("discount", productDiscount);
+                                bundle.putDouble("price", productPrice);
+                                bundle.putByte("shipmentPlans", productShipmentPlans);
+                                bundle.putString("category", String.valueOf(productCategory));
+
+                                Intent itemDetails = new Intent(getContext(), ItemDetailsActivity.class);
+                                itemDetails.putExtras(bundle);
+                                startActivity(itemDetails);
+                            }
+                        });
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

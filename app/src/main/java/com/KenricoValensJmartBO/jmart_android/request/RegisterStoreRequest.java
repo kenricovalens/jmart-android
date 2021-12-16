@@ -8,6 +8,9 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Request ini digunakan untuk mendaftarkan store.
+ */
 public class RegisterStoreRequest extends StringRequest {
     private static final String URL = "http://10.0.2.2:8080/account/" + getLoggedAccount().id + "/registerStore";
     private final Map<String, String> params;

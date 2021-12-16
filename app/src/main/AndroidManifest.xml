@@ -13,12 +13,35 @@
         android:theme="@style/Theme.Jmartandroid"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".StorePaymentDetailsActivity"
+            android:label="Store Order Details"
+            android:exported="false" />
+        <activity
+            android:name=".AccountPaymentDetailsActivity"
+            android:label="Account Payment Details"
+            android:exported="false" />
+        <activity
+            android:name=".AccountOrderActivity"
+            android:exported="false"
+            android:label="Account Order History" />
+        <activity
+            android:name=".StoreOrderActivity"
+            android:exported="false"
+            android:label="Store Order Request" />
+        <activity
+            android:name=".PaymentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ItemDetailsActivity"
+            android:exported="false"
+            android:label="Product Details" />
+        <activity
             android:name=".CreateProductActivity"
             android:exported="false" />
         <activity
             android:name=".AboutMeActivity"
-            android:label="About Me"
-            android:exported="false" />
+            android:exported="false"
+            android:label="About Me" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
