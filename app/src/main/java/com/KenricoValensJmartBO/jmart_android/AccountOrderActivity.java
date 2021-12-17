@@ -34,6 +34,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * AccountOrderActivity adalah activity yang digunakan untuk melihat history pembayaran yang telah
+ * dilakukan akun tersebut. Setiap Payment akan dipasangkan dengan Product yang dibeli melalui
+ * payment.productId. Kedua Payment dan Product yang berpasangan akan ditaruh pada satu object baru
+ * berisi Payment dan Product. ArrayList yang digunakan bertipe binding tersebut.
+ */
 public class AccountOrderActivity extends AppCompatActivity {
 
     private ListView paymentListView;
@@ -50,15 +56,20 @@ public class AccountOrderActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 try {
+                    // Buat JSONArray berisi seluruh response Payment yang sudah dilakukan.
                     JSONArray jsonArray = new JSONArray(response);
+                    // List ini nantinya akan ditampilkan pada Adapter dan ListView.
                     List<ProductPaymentBinding> filteredPaymentList = new ArrayList<>();
 
+                    // JSONArray akan dipisahkan per JSONObjectnya, lalu cast ke object Payment.
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject newObj = jsonArray.getJSONObject(i);
                         ProductPaymentBinding productPaymentBinding = new ProductPaymentBinding();
                         Payment payment = gson.fromJson(newObj.toString(), Payment.class);
                         productPaymentBinding.payment = payment;
 
+                        // Untuk mencari produk yang dibeli, setiap Payment menggunakan productId untuk
+                        // melakukan request mencari produk terkait.
                         Response.Listener<String> listener1 = new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response1) {
@@ -68,17 +79,21 @@ public class AccountOrderActivity extends AppCompatActivity {
                                         Product productReturned = gson.fromJson(object.toString(), Product.class);
                                         productPaymentBinding.product = productReturned;
 
-
+                                        // Filter agar Payment yang terlihat hanya akun yang sedang Login
                                         if(productPaymentBinding.payment.buyerId == getLoggedAccount().id) {
                                             filteredPaymentList.add(productPaymentBinding);
                                         }
 
-                                        // TODO: Layout ganti menjadi nama item dan status order (custom .xml view)
+                                        // SetAdapter ArrayList untuk melihatkan isi List
                                         ArrayAdapter<ProductPaymentBinding> allItemsAdapter = new ArrayAdapter<ProductPaymentBinding>(AccountOrderActivity.this,
                                                 android.R.layout.simple_list_item_1,
                                                 filteredPaymentList);
                                         paymentListView.setAdapter(allItemsAdapter);
 
+                                        /**
+                                         * Setiap itemList dapat di-click. Setiap item yang diclick akan mengirim semua
+                                         * field ke activity baru menggunakan Bundle. Lalu Intent ke AccountPaymentDetailsActivity
+                                         */
                                         paymentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
                                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -126,7 +141,8 @@ public class AccountOrderActivity extends AppCompatActivity {
                                         , Toast.LENGTH_SHORT).show();
                             }
                         };
-                        
+
+                        // Jalankan request kedua untuk mencari product yang dibeli dari Payment yang ditemukan
                         FindProductPaymentBindingRequest newFindProductPaymentBinding = new FindProductPaymentBindingRequest(productPaymentBinding.payment.productId, listener1, errorListener1);
                         RequestQueue queue = Volley.newRequestQueue(AccountOrderActivity.this);
                         queue.add(newFindProductPaymentBinding);
@@ -148,11 +164,16 @@ public class AccountOrderActivity extends AppCompatActivity {
             }
         };
 
+        // Jalankan request pertama untuk mendapatkan seluruh Payment dari payment.json
         GetOrderRequest newAccountOrder = new GetOrderRequest(0, listener, errorListener);
         RequestQueue queue = Volley.newRequestQueue(AccountOrderActivity.this);
         queue.add(newAccountOrder);
     }
 
+    /**
+     * Method onResume() ini digunakan saat activity dijalankan kembali setelah pindah ke activity lain.
+     * Fungsi method ini sama untuk melakukan penampilan terhadap Payment History
+     */
     @Override
     protected void onResume() {
         super.onResume();

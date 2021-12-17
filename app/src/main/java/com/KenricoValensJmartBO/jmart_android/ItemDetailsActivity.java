@@ -15,8 +15,12 @@ import com.KenricoValensJmartBO.jmart_android.model.Product;
 
 import java.math.BigDecimal;
 
+/**
+ * ItemDetailsActivity adalah activity untuk melihat detail produk saat diklik yang ada di ListView.
+ */
 public class ItemDetailsActivity extends AppCompatActivity {
 
+    // Inisiasi komponen yang ingin digunakan
     TextView productName, productWeight, productPrice, productDiscount, productConditionUsed, productCategory, productShipmentPlans;
     Button proceedToBuy;
     int productId, accountId;
@@ -27,6 +31,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_details);
 
+        // Cari ID tiap komponen sesuai .xml
         productName = findViewById(R.id.productDetailName);
         productWeight = findViewById(R.id.productDetailWeight);
         productPrice = findViewById(R.id.productDetailPrice);
@@ -37,6 +42,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
 
         proceedToBuy = findViewById(R.id.toPaymentActivity);
 
+        // Dapatkan extras dari Intent berisi semua key value pair tentang produk yang diclick.
         if(getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
 
@@ -81,6 +87,11 @@ public class ItemDetailsActivity extends AppCompatActivity {
             }
         }
 
+        /**
+         * Button ini digunakan untuk membeli produk yang sudah diclick untuk dilihat detailnya.
+         * Untuk melakukan konfirmasi pembelian, setelah user click button ini maka akan dibuat bundle
+         * berisi informasi yang dibutuhkan, lalu Intent ke PaymentActivity.
+         */
         proceedToBuy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,6 +103,7 @@ public class ItemDetailsActivity extends AppCompatActivity {
                 bundle.putDouble("discount", Double.parseDouble(productDiscount.getText().toString()));
                 bundle.putByte("shipmentPlan", shipmentPlan);
 
+                // User tidak bisa membeli produknya sendiri
                 if(getLoggedAccount().id == accountId) {
                     Toast.makeText(getApplicationContext(), "Anda tidak bisa membeli produk Anda sendiri.",
                             Toast.LENGTH_SHORT).show();

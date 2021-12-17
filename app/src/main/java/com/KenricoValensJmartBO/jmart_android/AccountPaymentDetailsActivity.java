@@ -23,8 +23,13 @@ import org.json.JSONObject;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
+/**
+ * AccountPaymentDetailsActivity adalah class untuk melihat detail dari pembelian produk yang sudah
+ * dilakukan pada Jmart. Account bisa melakukan Cancel pada pembayaran yang sudah dilakukan.
+ */
 public class AccountPaymentDetailsActivity extends AppCompatActivity {
 
+    // Inisiasi komponen yang digunakan
     TextView boughtProductName, boughtProductPrice, boughtProductDate, boughtProductMessage, boughtProductShipmentPlan;
     Button cancelAccountOrder;
 
@@ -33,6 +38,7 @@ public class AccountPaymentDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_payment_details);
 
+        // Cari ID sesuai dengan layout pada .xml
         boughtProductName = findViewById(R.id.accPaymentProdName);
         boughtProductPrice = findViewById(R.id.accPaymentProdPrice);
         boughtProductDate = findViewById(R.id.accPaymentProdDate);
@@ -41,6 +47,8 @@ public class AccountPaymentDetailsActivity extends AppCompatActivity {
 
         cancelAccountOrder = findViewById(R.id.accCancelPayment);
 
+        // Ambil bundle yang dikirim dari AccountOrderActivity berisi informasi key value pair
+        // berisi informasi Payment dan Product yang dibeli.
         Bundle bundle =  getIntent().getExtras();
 
         boughtProductName.setText(bundle.getString("name"));
@@ -48,9 +56,9 @@ public class AccountPaymentDetailsActivity extends AppCompatActivity {
         boughtProductDate.setText(bundle.getString("date"));
         boughtProductMessage.setText(bundle.getString("message"));
 
-        // TODO: Pakai Switch Case nanti
         boughtProductShipmentPlan.setText(String.valueOf(bundle.getByte("shipmentPlans")));
 
+        // Jika statusnya CANCELLED, Account tidak bisa melakukan cancel.
         if(bundle.getString("status").equals("CANCELLED")) {
             cancelAccountOrder.setVisibility(View.GONE);
         }
@@ -58,9 +66,13 @@ public class AccountPaymentDetailsActivity extends AppCompatActivity {
             cancelAccountOrder.setVisibility(View.VISIBLE);
         }
 
+        /**
+         * onClickListener untuk button cancel order.
+         */
         cancelAccountOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Buat AlertDialog sebagai konfirmasi, meyakinkan user tidak mis-click.
                 AlertDialog.Builder builder = new AlertDialog.Builder(AccountPaymentDetailsActivity.this);
 
                 builder.setTitle("Konfirmasi Cancel Pembelian");
@@ -88,6 +100,7 @@ public class AccountPaymentDetailsActivity extends AppCompatActivity {
                             }
                         };
 
+                        // Dapatkan paymentId dari bundle, buat request untuk cancel.
                         int paymentId = bundle.getInt("paymentId");
                         CancelOrderRequest newCancelOrder = new CancelOrderRequest(paymentId, listener, errorListener);
                         RequestQueue queue = Volley.newRequestQueue(AccountPaymentDetailsActivity.this);

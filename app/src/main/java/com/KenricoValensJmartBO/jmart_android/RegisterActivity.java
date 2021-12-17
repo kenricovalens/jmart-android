@@ -19,8 +19,12 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * RegisterActivity digunakan jika user tidak memiliki akun, maka user bisa mendaftarkan akun baru.
+ */
 public class RegisterActivity extends AppCompatActivity {
 
+    // Inisiasi komponen yang ingin digunakan
     private EditText registerName;
     private EditText registerEmail;
     private EditText registerPassword;
@@ -31,6 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        // Cari ID setiap komponen
         registerName = findViewById(R.id.registerName);
         registerEmail = findViewById(R.id.registerEmail);
         registerPassword = findViewById(R.id.registerPassword);
@@ -38,6 +43,10 @@ public class RegisterActivity extends AppCompatActivity {
 
         RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
 
+        /**
+         * Setelah mengclick button ini, maka ambil string dari field name, email, dan passsword untuk
+         * dikirim ke request membuat akun baru. Jika berhasil, maka user akan diredirect ke LoginActivity.
+         */
         registerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Response.Listener<String> listener = new Response.Listener<String>() {

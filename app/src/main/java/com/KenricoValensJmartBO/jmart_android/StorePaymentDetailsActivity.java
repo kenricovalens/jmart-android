@@ -23,8 +23,13 @@ import com.android.volley.toolbox.Volley;
 
 import java.util.Map;
 
+/**
+ * StorePaymentDetailsActivity melihat detail Order yang dilakukan account lain. Sama seperti AccountPaymentDetailsActivity,
+ * Store bisa melihat detil, namun bedanya store bisa melakukan accept, submit, dan cancel.
+ */
 public class StorePaymentDetailsActivity extends AppCompatActivity {
 
+    // Inisiasi komponen yang akan digunakan
     TextView orderedProductName, orderedProductPrice, orderedProductDate, orderedProductMessage, orderedProductShipmentPlan;
     Button cancelStoreOrder, acceptStoreOrder, submitStoreOrder;
 
@@ -33,6 +38,7 @@ public class StorePaymentDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_payment_details);
 
+        // Cari ID komponen dari layout
         orderedProductName = findViewById(R.id.storePaymentProdName);
         orderedProductPrice = findViewById(R.id.storePaymentProdPrice);
         orderedProductDate = findViewById(R.id.storePaymentProdDate);
@@ -43,22 +49,25 @@ public class StorePaymentDetailsActivity extends AppCompatActivity {
         acceptStoreOrder = findViewById(R.id.storeAcceptPayment);
         submitStoreOrder = findViewById(R.id.storeSubmitPayment);
 
+        // Ambil bundle dari StoreOrderActivity berisi informasi Payment dan Product
         Bundle bundle = getIntent().getExtras();
 
+        // SetText informasi yang didapatkan
         orderedProductName.setText(bundle.getString("name"));
         orderedProductPrice.setText(String.valueOf(bundle.getDouble("price")));
         orderedProductDate.setText(bundle.getString("date"));
         orderedProductMessage.setText(bundle.getString("message"));
 
-        // TODO: Pakai Switch Case nanti
         orderedProductShipmentPlan.setText(String.valueOf(bundle.getByte("shipmentPlans")));
 
-        // set button OnClickListener
-        // Cancel button, cant click if status CANCELLED or status already accepted and on_delivery
+        /**
+         * Cancel button, cant click if status CANCELLED or status already accepted and on_delivery
+         */
         cancelStoreOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(bundle.getString("status").equals("WAITING_CONFIRMATION")) {
+                    // Alert Builder untuk konfirmasi.
                     AlertDialog.Builder builder = new AlertDialog.Builder(StorePaymentDetailsActivity.this);
 
                     builder.setTitle("Konfirmasi Cancel Order");

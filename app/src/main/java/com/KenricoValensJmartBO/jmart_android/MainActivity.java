@@ -108,6 +108,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method onBackPressed pada MainActivity mencegah activity ke LoginActivity karena tidak logis
+     * untuk ada session login namun kembali ke LoginActivity. Maka dari itu, tombol Back pada
+     * MainActivity akan langsung keluar dari aplikasi dan menempatkannya pada background task
+     * (dapat dilihat jika kita ingin mengosongkan RAM pada handphone).
+     */
     @Override
     public void onBackPressed() {
         if (viewPager.getCurrentItem() == 0) {

@@ -24,8 +24,12 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * CreateProductActivity digunakan untuk membuat produk baru.
+ */
 public class CreateProductActivity extends AppCompatActivity {
 
+    // Inisiasi semua komponen yang ingin digunakan
     EditText edProductName, edProductWeight, edProductPrice, edProductDiscount;
     RadioGroup radioConditionUsed;
     Spinner spinnerProductCategory, spinnerProductShipmentPlan;
@@ -38,6 +42,7 @@ public class CreateProductActivity extends AppCompatActivity {
 
         RequestQueue queue = Volley.newRequestQueue(CreateProductActivity.this);
 
+        // Cari ID dari layout sesuai komponen yang ada .xml
         edProductName = findViewById(R.id.createProductName);
         edProductWeight = findViewById(R.id.createProductWeight);
         edProductPrice = findViewById(R.id.createProductPrice);
@@ -51,6 +56,10 @@ public class CreateProductActivity extends AppCompatActivity {
         createProductBtn = findViewById(R.id.createProductButton);
         cancelCreateProductBtn = findViewById(R.id.cancelCreateProductButton);
 
+        /**
+         * Button Create digunakan untuk membuat produk dengan mengirikan request. Tidak bisa buat
+         * produk jika terdapat field yang kosong.
+         */
         createProductBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,6 +68,8 @@ public class CreateProductActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
+                            // Setelah dibuat, clear semua field agar mencegah user membuat produk
+                            // dengan spesifikasi yang sama
                             if(jsonObject != null) {
                                 Toast.makeText(getApplicationContext(),
                                         "Produk berhasil dibuat.", Toast.LENGTH_SHORT).show();
@@ -85,6 +96,7 @@ public class CreateProductActivity extends AppCompatActivity {
                     }
                 };
 
+                // Error handling jika ada field yang kosong
                 if(edProductName.getText().toString().isEmpty() || edProductWeight.getText().toString().isEmpty()
                         || edProductPrice.getText().toString().isEmpty()
                         || edProductDiscount.getText().toString().isEmpty()) {
@@ -144,6 +156,7 @@ public class CreateProductActivity extends AppCompatActivity {
                             throw new IllegalStateException("Unexpected value: " + shipmentPlan);
 
                     }
+                    // Request untuk membuat produk baru dengan parameter yang dibutuhkan backend
                     CreateProductRequest newCreateProduct = new CreateProductRequest(getLoggedAccount().id, productName,
                             productWeight, productPrice, productDiscount, conditionUsed,
                             productCategory, shipmentBytes, listener, errorListener);
@@ -153,6 +166,9 @@ public class CreateProductActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * Jika cancel, maka Intent ke MainActivity.
+         */
         cancelCreateProductBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

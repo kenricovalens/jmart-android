@@ -30,6 +30,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * StoreOrderActivity pada dasarnya sama seperti AccountOrderActivity, yang membedakan adalah isi ListView
+ * dengan filter yang berbeda. Selain itu, Store bisa melakukan Accept dan Submit order.
+ */
 public class StoreOrderActivity extends AppCompatActivity {
 
     ListView orderListView;
@@ -42,14 +46,17 @@ public class StoreOrderActivity extends AppCompatActivity {
 
         orderListView = findViewById(R.id.accOrderListView);
 
+        // Setelah activity ini aktif, langsung request semua order.
         Response.Listener<String> listener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
+                    // Ambil semua Payment
                     JSONArray jsonArray = new JSONArray(response);
                     List<ProductPaymentBinding> filteredPaymentList = new ArrayList<>();
 
                     for (int i = 0; i < jsonArray.length(); i++) {
+                        // Pisahkan Payment per object
                         JSONObject newObj = jsonArray.getJSONObject(i);
                         ProductPaymentBinding productPaymentBinding = new ProductPaymentBinding();
                         Payment payment = gson.fromJson(newObj.toString(), Payment.class);
@@ -64,17 +71,18 @@ public class StoreOrderActivity extends AppCompatActivity {
                                         Product productReturned = gson.fromJson(object.toString(), Product.class);
                                         productPaymentBinding.product = productReturned;
 
-
+                                        // Filter jika pembuat produk tersebut sama seperti akun yang sedang log in, maka
+                                        // order dituju untuk store akun itu.
                                         if (productPaymentBinding.product.accountId == getLoggedAccount().id) {
                                             filteredPaymentList.add(productPaymentBinding);
                                         }
 
-                                        // TODO: Layout ganti menjadi nama item dan status order (custom .xml view)
                                         ArrayAdapter<ProductPaymentBinding> allItemsAdapter = new ArrayAdapter<ProductPaymentBinding>(StoreOrderActivity.this,
                                                 android.R.layout.simple_list_item_1,
                                                 filteredPaymentList);
                                         orderListView.setAdapter(allItemsAdapter);
 
+                                        // Set agar setiap item dapat diclick
                                         orderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
                                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -123,6 +131,7 @@ public class StoreOrderActivity extends AppCompatActivity {
                             }
                         };
 
+                        // Lakukan request mencari product terkait payment
                         FindProductPaymentBindingRequest newFindProductPaymentBinding = new FindProductPaymentBindingRequest(productPaymentBinding.payment.productId, listener1, errorListener1);
                         RequestQueue queue = Volley.newRequestQueue(StoreOrderActivity.this);
                         queue.add(newFindProductPaymentBinding);
@@ -144,6 +153,7 @@ public class StoreOrderActivity extends AppCompatActivity {
             }
         };
 
+        // Lakukan request mencari Payment.
         GetOrderRequest newAccountOrder = new GetOrderRequest(0, listener, errorListener);
         RequestQueue queue = Volley.newRequestQueue(StoreOrderActivity.this);
         queue.add(newAccountOrder);

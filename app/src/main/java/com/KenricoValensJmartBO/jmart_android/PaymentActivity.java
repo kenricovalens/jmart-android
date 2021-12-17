@@ -27,8 +27,13 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 
+/**
+ * PaymentActivity adalah activity yang dilakukan saat melakukan pembelian produk. User bisa menentukan
+ * jumlah produk yang ingin dibeli sekaligus melihat balance yang ada dan harga total.
+ */
 public class PaymentActivity extends AppCompatActivity {
 
+    // Inisiasi komponen yang ingin digunakan
     TextView buyProductName, buyProductPrice, buyProductDiscount, loggedAccountBalance, buyTotalPrice;
     EditText buyProductPcs, buyProductAddress;
     Button buyProductBtn, cancelBuyProductBtn, incrementProductPcs, decrementProductPcs;
@@ -40,6 +45,7 @@ public class PaymentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
 
+        // Cari ID setiap komponen pada layout
         buyProductName = findViewById(R.id.buyProductName);
         buyProductPrice = findViewById(R.id.buyProductPrice);
         buyProductDiscount = findViewById(R.id.buyProductDiscount);
@@ -55,6 +61,7 @@ public class PaymentActivity extends AppCompatActivity {
         incrementProductPcs = findViewById(R.id.incrementPcs);
         decrementProductPcs = findViewById(R.id.decrementPcs);
 
+        // Ambil extras bundle yang dikirim bersamaan dengan bundle dari ItemDetailsActivity
         if(getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
 
@@ -70,12 +77,17 @@ public class PaymentActivity extends AppCompatActivity {
             buyTotalPrice.setText(buyProductPrice.getText().toString());
         }
 
+        /**
+         * EditText buyProductPcs ditambahkan addTextChangedListener. Tujuannya adalah saat jumlah
+         * produk yang dibeli berubah, maka TextView total harga juga akan berubah.
+         */
         buyProductPcs.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
             }
 
+            // Saat berubah, maka set harga total juga berubah
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if(!buyProductPcs.getText().toString().isEmpty()) {
@@ -90,6 +102,9 @@ public class PaymentActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * Button untuk menambahkan jumlah produk sebanyak 1 buah
+         */
         incrementProductPcs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,6 +112,10 @@ public class PaymentActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * Button untuk mengurangi jumlah produk sebesar 1. Jika jumlah pada EditText sudah 1, maka
+         * tidak bisa mengurangi lagi.
+         */
         decrementProductPcs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -110,18 +129,24 @@ public class PaymentActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * buyProductBtn digunakan saat user benar ingin membeli barang.
+         */
         buyProductBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Error handling #1 : Jika balance akun kurang dari total harga, maka tidak bisa beli
                 if(getLoggedAccount().balance < Double.parseDouble(buyTotalPrice.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "Saldo Anda tidak cukup, silahkan top up terlebih dahulu.",
                             Toast.LENGTH_SHORT).show();
                 }
+                // Error handling #2 : Jika alamat kosong, tidak bisa beli
                 else if(buyProductAddress.getText().toString().isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Alamat tidak boleh kosong.",
                             Toast.LENGTH_SHORT).show();
                 }
                 else {
+                    // Buat AlertDialog untuk konfirmasi, mencegah misclick user.
                     AlertDialog.Builder builder = new AlertDialog.Builder(PaymentActivity.this);
 
                     builder.setTitle("Konfirmasi Pembelian Produk");
@@ -135,6 +160,7 @@ public class PaymentActivity extends AppCompatActivity {
                                     try {
                                         JSONObject object = new JSONObject(response);
                                         if(object != null) {
+                                            // Jika berhasil, kurangi balance getLoggedAccount.
                                             getLoggedAccount().balance -= Integer.parseInt(buyProductPcs.getText().toString()) * Double.parseDouble(buyProductPrice.getText().toString());
 
                                             Toast.makeText(getApplicationContext(), "Pembelian berhasil! Silahkan cek history Anda.",
@@ -164,6 +190,7 @@ public class PaymentActivity extends AppCompatActivity {
                             String address = buyProductAddress.getText().toString();
                             int totalPcs = Integer.parseInt(buyProductPcs.getText().toString());
 
+                            // Buat requet beli product dan tambahkan ke queue untuk dijalankan.
                             BuyProductRequest newBuyProductRequest = new BuyProductRequest(getLoggedAccount().id,
                                     productId, totalPcs, address, shipmentPlan, listener, errorListener);
 
@@ -182,6 +209,9 @@ public class PaymentActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * User bisa cancel beli untuk kembali ke ItemDetailsActivity melihat informasi produk.
+         */
         cancelBuyProductBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

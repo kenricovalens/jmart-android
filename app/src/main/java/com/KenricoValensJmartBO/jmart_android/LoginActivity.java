@@ -28,10 +28,17 @@ import org.json.JSONObject;
 
 import java.util.Map;
 
+/**
+ * LoginActivity digunakan untuk melakukan login. Halaman ini akan diperlihatkan ke user untuk pertama
+ * kalinya. Pada activity ini sudah diimplementasikan session sehingga saat device masih menyala dan
+ * sudah melakukan login sebelumnya, user bisa langsung masuk ke MainActivity.
+ */
 public class LoginActivity extends AppCompatActivity {
     private static final Gson gson = new Gson();
+    // loggedAccount adalah global variabel untuk akun yang sedang log in sekarang.
     private static Account loggedAccount;
 
+    // Inisiasi komponen yang akan digunakan
     private EditText loginEmail;
     private EditText loginPassword;
     private Button loginButton;
@@ -44,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Buat session baru
         session = new SessionManager(getApplicationContext());
 
         loginEmail = findViewById(R.id.loginEmail);
@@ -51,6 +59,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.loginButton);
         toRegister = findViewById(R.id.toRegisterPage);
 
+        // Jika user pernah log in sebelumnya, langsung cari Account terkait dengan ID, masukkan ke
+        // loggedAccount, lalu Intent ke MainActivity
         if(session.isLoggedIn()) {
             Map<String, Integer> userId = session.getUserDetails();
             int loggedAccountId = userId.get("accountId");
@@ -86,9 +96,13 @@ public class LoginActivity extends AppCompatActivity {
             RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
             queue.add(getAccountSession);
         }
-        else {
+        else { // Jika session false, maka user harus login pada activity ini.
             RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
 
+            /**
+             * Button login digunakan untuk melakukan login menggunakan email dan password yang
+             * dimasukkan user
+             */
             loginButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -124,6 +138,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                     };
+                    // Ambil email dan password, kirimkan melalui request.
                     String email = loginEmail.getText().toString();
                     String password = loginPassword.getText().toString();
                     LoginRequest newLogin = new LoginRequest(email, password, listener, errorListener);
@@ -131,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
+            // TextView ditambahkan method onClick untuk Intent ke RegisterActivity
             toRegister.setOnClickListener(v -> {
                 Intent toRegisterPage = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(toRegisterPage);
